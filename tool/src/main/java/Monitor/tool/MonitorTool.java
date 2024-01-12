@@ -81,30 +81,11 @@ public class MonitorTool {
 			MongoCollection<Document> clonesCollection = db.getCollection("clones");
 			MongoCollection<Document> statusUpdatesCollection = db.getCollection("statusUpdates");
 			
-			FindIterable<Document> documents = clonesCollection.find();
-			MongoCursor<Document> iterator = documents.iterator();
 
-			int totalLength = 0;
-			int numberOfClones = 0;
-
-			while (iterator.hasNext()) {
-				Document document = iterator.next();
-				totalLength += calculateCloneLength(document);
-				numberOfClones++;
-			}
-
-			if (numberOfClones > 0) {
-				double averageLength = (double) totalLength / numberOfClones;
-				System.out.println("Average Clone Length: " + averageLength);
-			} else {
-				System.out.println("No clones found in the collection.");
-			}
-			
-
-//			scheduler.scheduleAtFixedRate(() -> {
-//				collectAndPrintStatistics(filesCollection, chunksCollection, candidatesCollection, clonesCollection,
-//						statusUpdatesCollection);
-//			}, 0, 5, TimeUnit.MINUTES);
+			scheduler.scheduleAtFixedRate(() -> {
+				collectAndPrintStatistics(filesCollection, chunksCollection, candidatesCollection, clonesCollection,
+						statusUpdatesCollection);
+			}, 0, 5, TimeUnit.MINUTES);
 		} catch (Exception e) {
 			logger.error("Failed to connect to the MongoDB database.", e);
 		}
